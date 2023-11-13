@@ -1,0 +1,176 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Helvetica;
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+}
+
+#game {
+    height: 700px;
+    width: 850px;
+    margin-top: 80px;
+    margin-bottom: 100px;
+    background-color: lightgray;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 3fr 1fr;
+}
+
+#display-board {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    background-color: green;
+    margin: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    height: 550px;
+    
+}
+
+/* top row */
+
+#emmett-bet {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    background-color: black;
+    margin: 30px;
+    color: white;
+    text-align: center;
+    height: 100px;
+    width: 160px;
+    justify-self: center;
+}
+
+#emmett-hand {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    margin: 30px;
+    justify-self: center;
+}
+
+#emmett-hand > div {
+    align-items: center;
+}
+
+#emmett-bank {
+    grid-column: 3/4;
+    grid-row: 1/2;
+    background-color: purple;
+    margin: 30px;
+    color: white;
+    text-align: center;
+    height: 100px;
+    width: 160px;
+    justify-self: center;
+}
+
+/* MIDDLE ROW */
+#pot {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    background-color: yellow;
+    height: 125px;
+    width: 200px;
+    justify-self: center;
+    text-align: center;
+}
+
+#community-cards {
+    grid-column: 2/4;
+    grid-row: 2/3;
+    justify-self: center;
+}
+
+#community-cards > div {
+    align-items: center;
+}
+
+/* BOTTOM ROW */
+#player-bet {
+    grid-column: 1/2;
+    grid-row: 3/4;
+    background-color: black;
+    margin: 30px;
+    /* margin-top: 0px; */
+    color: white;
+    text-align: center;
+    height: 100px;
+    width: 160px;
+    justify-self: center;
+}
+
+#player-hand {
+    grid-column: 2/3;
+    grid-row: 3/4;
+    margin: 30px;
+    /* margin-top: 0px; */
+    justify-self: center;
+}
+
+#player-hand > div {
+    align-items: center;
+}
+
+#player-bank {
+    grid-column: 3/4;
+    grid-row: 3/4;
+    background-color: purple;
+    margin: 30px;
+    /* margin-top: 0px; */
+    color: white;
+    text-align: center;
+    height: 100px;
+    width: 160px;
+    justify-self: center;
+}
+
+
+/* BUTTONS */
+#interface {
+    grid-column: 1/2;
+    grid-row: 2/3;
+    background-color: pink;
+    height: 125px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+#increase-bet {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    
+}
+
+#decrease-bet {
+    grid-column: 1/2;
+    grid-row: 2/3;
+}
+
+#bet {
+    grid-column: 1/2;
+    grid-row: 3/4;
+}
+
+#check {
+    grid-column: 2/3;
+    grid-row: 1/2;
+}
+
+#fold {
+    grid-column: 2/3;
+    grid-row: 3/4;
+}
+
+#new-game {
+    grid-column: 3/4;
+    grid-row: 2/3;
+}

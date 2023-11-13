@@ -13,34 +13,53 @@
     
     <div id="game">
         <div id="display-board">
-            <div id="emmett-bet"></div>
-            <div id="emmett-hand"></div>
-            <div id="emmett-bank"></div>
-
-            <div id="pot"></div>
-            <div id="community-cards">
-                <div id="card1"></div>
-                <div id="card2"></div>
-                <div id="card3"></div>
-                <div id="card4"></div>
-                <div id="card5"></div>
+            <div id="emmett-bet">
+                <h5>Current Bet</h5>
+                <h3>$25</h3>
+            </div>
+            <div id="emmett-hand">
+                <div class="card back-red" id = "emmett-card1"></div>
+                <div class="card back-red" id = "emmett-card2"></div>
+            </div>
+            <div id="emmett-bank">
+                <h5>Emmett's Bank</h5>
+                <h3>$150</h3>
             </div>
 
-            <div id="player-bet"></div>
-            <div id="player-hand"></div>
-            <div id="player-bank"></div>
+            <div id="pot">
+                <h5>Pot</h5>
+                <h3>$80</h3>
+            </div>
+            <div id="community-cards">
+                <div class="card back-red" id="card1"></div>
+                <div class="card back-red" id="card2"></div>
+                <div class="card back-red" id="card3"></div>
+                <div class="card back-red" id="card4"></div>
+                <div class="card back-red" id="card5"></div>
+            </div>
+
+            <div id="player-bet">
+                <h5>Current Bet</h5>
+                <h3>$25</h3>
+            </div>
+            <div id="player-hand">
+                <div class="card back-red" id = "player-card1"></div>
+                <div class="card back-red" id = "player-card2"></div>
+            </div>
+            <div id="player-bank">
+                <h5>Your Bank</h5>
+                <h3>$350</h3>
+            </div>
         </div>
         <div id="interface">
-            <div id="player-buttons">
-                <button id="increase-bet"></button>
-                <button id="decrease-bet"></button>
-                <button id="bet"></button>
+            <button id="increase-bet">INCREASE</button>
+            <button id="decrease-bet">DECREASE</button>
+            <button id="bet">BET</button>
 
-                <button id="check"></button>
-                <button id="fold"></button>
-            </div>
+            <button id="check">CHECK</button>
+            <button id="fold">FOLD</button>
 
-            <button id="new-game"></button>
+            <button id="new-game">NEW GAME</button>
         </div>
     </div>
 </body>
