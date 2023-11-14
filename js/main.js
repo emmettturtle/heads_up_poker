@@ -55,6 +55,26 @@ const disMessage = document.getElementById('message');
 
 /*----- functions -----*/
 
+initGame();
+function initGame () {
+    //reset community cards
+    communityCards = [null, null, null, null, null];
+    shuffledDeck = shuffleDeck();
+}
+
+function shuffleDeck() {
+    const tempDeck = [...deck];
+    const thisShuffledDeck = [];
+
+    while (tempDeck.length) {
+        const rndIdx = Math.floor(Math.random() * tempDeck.length);
+        let randomCard = tempDeck.splice(rndIdx, 1);
+        thisShuffledDeck.push(randomCard[0]);
+    }
+
+    return thisShuffledDeck;
+}
+
 function buildDeck() {
     const deck = [];
 
