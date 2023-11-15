@@ -29,7 +29,8 @@ let playerBank;
 let emmettBank;
 let emmettCurrBet;
 let playerCurrBet;
-
+let playerBestFive;
+let emmettBestFive;
 
 /*----- cached elements  -----*/
 const disPlayerBet = document.getElementById('player-bet-value');
@@ -302,4 +303,72 @@ function buildDeck() {
     });
 
     return deck;
+}
+
+function determineHand(hand) {
+    let fullHand = communityCards.concat(hand);
+    let hasHands = []
+
+    // format [#clubs, #spaids, #hearts, #diamonds]
+    const suitMap = [0,0,0,0];
+    const suitMapDir = {c:0, s:1, h:2, d:3}
+    // format [#1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #j, #q, #k, #a]
+    const valueMap = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    const valueMapDir = {J:10, Q:11, K:12, A:13}
+    //deck in format of suit-value, exs: s03 cK hA
+    fullHand.forEach(function(card){
+        let cardSuit = card.slice(0, 1);
+        let cardVal = card.slice(1);
+
+        suitMap[suitMapDir[cardSuit]] += 1;
+        
+        if (cardVal === 'J' || cardVal === 'Q' || cardVal === 'K' || cardVal === 'A') {
+            valueMap[valueMapDir[cardVal]] += 1;
+        } else {
+            valueMap[parseInt(cardVal)-1] += 1;
+        }
+    })
+    
+
+    if (flush(suitMap, valueMap)) {
+        hasHands.push('flush');
+    } else if (straight(suitMap, valueMap)) {
+        hasHands.push('straight');
+    } else if (fourKind(suitMap, valueMap)) {
+        hasHands.push('four of a kind');
+    } else if (fullHouse(suitMap, valueMap)) {
+        hasHands.push('full house');
+    } else if (threeKind(suitMap, valueMap)) {
+        hasHands.push('three of a kind');
+    } else if (pair(suitMap, valueMap)) {
+        hasHands.push('pair');
+    } else {
+        hasHands.push('high card');
+    }
+
+}
+
+function flush (suitMap, valueMap) {
+    let spaid, heart, diamond, club;
+
+}
+
+function straight (suitMap, valueMap) {
+
+}
+
+function fourKind (suitMap, valueMap) {
+
+}
+
+function fullHouse (suitMap, valueMap) {
+
+}
+
+function threeKind (suitMap, valueMap) {
+
+}
+
+function pair (suitMap, valueMap) {
+
 }
