@@ -15,6 +15,8 @@ const handRanks = [
     'pair',
     'high card'
 ];
+const suitMapDir = {c:0, s:1, h:2, d:3}
+const valueMapDir = {J:10, Q:11, K:12, A:13}
 
 /*----- state variables -----*/
 let currentRound; //tracks round
@@ -306,15 +308,13 @@ function buildDeck() {
 }
 
 function determineHand(hand) {
-    let fullHand = communityCards.concat(hand);
-    let hasHands = []
-
-    // format [#clubs, #spaids, #hearts, #diamonds]
-    const suitMap = [0,0,0,0];
-    const suitMapDir = {c:0, s:1, h:2, d:3}
+    const fullHand = communityCards.concat(hand);
+    const hasHands = []
     // format [#1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #j, #q, #k, #a]
     const valueMap = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    const valueMapDir = {J:10, Q:11, K:12, A:13}
+    // format [#clubs, #spaids, #hearts, #diamonds]
+    const suitMap = [0,0,0,0];
+
     //deck in format of suit-value, exs: s03 cK hA
     fullHand.forEach(function(card){
         let cardSuit = card.slice(0, 1);
@@ -330,7 +330,7 @@ function determineHand(hand) {
     })
     
 
-    if (flush(suitMap, valueMap)) {
+    if (flush(suitMap, valueMap, fullHand)) {
         hasHands.push('flush');
     } else if (straight(suitMap, valueMap)) {
         hasHands.push('straight');
@@ -348,10 +348,38 @@ function determineHand(hand) {
 
 }
 
-function flush (suitMap, valueMap) {
-    let spaid, heart, diamond, club;
+function findHighCard (cards) {
 
 }
+
+function flush (suitMap, valueMap, fullHand) {
+    const flushCards = [];
+    let handHighCard;
+    const obj = {
+        'hasFlush': false,
+        'hand': flushCards,
+        'highCard': handHighCard
+    }
+
+    suitMap.forEach(function(suit, idx) {
+        if (suit >= 5) {
+            obj.hasFlush = true;
+            let thisSuit = Object.keys(suitMapDir)[idx];
+            fullHand.forEach(function(card) {
+                let cardSuit = card.slice(0, 1);
+                let cardVal = card.slice(1);
+                if (cardSuit === thisSuit) {
+                    flushCards.push(card);
+                }
+                handHighCard = findHighCard(flushCards);
+            });
+        }
+    });
+
+    return obj;
+}
+//communityCards = ['s04', 'sA', 's09', 's02', 'dA'];
+//determineHand(['s10','d03'])
 
 function straight (suitMap, valueMap) {
 
