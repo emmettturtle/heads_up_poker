@@ -51,12 +51,24 @@ const disMessage = document.getElementById('message');
 
 
 /*----- event listeners -----*/
-
+document.getElementById('interface').addEventListener('click', handleClick);
 
 /*----- functions -----*/
 
 initGame();
 function initGame () {
+    if (emmettBank === 0) {
+        message = 'The game is over! You have won! Press new game to play again...';
+        renderMessage();
+        return;
+    } else if (playerBank === 0) {
+        message = 'The game is over! Emmett has won! Press new game to play again...';
+        renderMessage();
+        return;
+    }
+
+    round = 1;
+
     shuffledDeck = shuffleDeck();
     //deal hands
     playerHand = [shuffledDeck.pop(), shuffledDeck.pop()];
@@ -70,7 +82,7 @@ function initGame () {
         shuffledDeck.pop() 
     ];
 
-    round = 1;
+
 
     if (handWinner === 1) {
         playerBank = playerBank + pot;
@@ -102,31 +114,18 @@ function initRound() {
         if (handWinner === 1) { //if player wins
             playerBank = playerBank + pot;
             pot = 0;
-            if (emmettBank === 0)  {
-                gameWinner = 1;
-                handWinner = null;
-                // console.log('tou beat emmett');
-                message = 'You have beaten Emmett in Poker!!!';
-            } else {
-                message = 'You have won the round! Get ready for the next round!'
-                //console.log('yay');
-                render();
-                setTimeout(initGame, 3000);
-                return;
-            }
+            message = 'You have won the round! Get ready for the next round!'
+            //console.log('yay');
+            render();
+            setTimeout(initGame, 3000);
+            return;
         } else if (handWinner === -1) {
             emmettBank = emmettBank + pot;
             pot = 0;
-            if (playerBank === 0) {
-                gameWinner = -1;
-                handWinner = null;
-                message = 'You have lost to Emmett in Poker!!!';
-            } else {
-                message = 'Emmett has won the round! Get ready for the next round!'
-                render();
-                setTimeout(initGame, 3000);
-                return;
-            }
+            message = 'Emmett has won the round! Get ready for the next round!'
+            render();
+            setTimeout(initGame, 3000);
+            return;
         } else if (handWinner === 'T') {
             let potRem = pot % 2;
             let evenPot = pot - potRem;
@@ -168,6 +167,13 @@ function renderPot() {
 }
 
 function renderCommunityCards () {
+    if (round === 1) {
+        disCommunityCard1.setAttribute('class', 'card back-red');
+        disCommunityCard2.setAttribute('class', 'card back-red');
+        disCommunityCard3.setAttribute('class', 'card back-red');
+        disCommunityCard4.setAttribute('class', 'card back-red');
+        disCommunityCard5.setAttribute('class', 'card back-red');
+    }
     if (round >= 2) {
         disCommunityCard1.setAttribute('class', 'card ' + communityCards[0]);
         disCommunityCard2.setAttribute('class', 'card ' + communityCards[1]);
@@ -194,9 +200,81 @@ function renderMessage () {
 
 function renderEmmettHand () {
     disEmmettCard1.setAttribute('class', 'card ' + emmettHand[0]);
-    disEmmettCard2.setAttribute('class', 'card ' + emmettHand[1]);}
+    disEmmettCard2.setAttribute('class', 'card ' + emmettHand[1]);
+}
 
-//render community cards: if round 1 render 3, if round2 render 4, etc
+function handleClick(evt) {
+    if (evt.target === document.getElementById('increase-bet')) {
+        playerCurrBet = playerCurrBet + 1;
+        renderBets();
+    } 
+    if (evt.target === document.getElementById('decrease-bet')) {
+        if (playerCurrBet > 0) {
+            playerCurrBet = playerCurrBet - 1;
+        }
+        renderBets();
+    } 
+
+    if (evt.target === document.getElementById('bet')) {
+        pot = pot + playerCurrBet;
+        let emmettDoes = emmettDecision();
+        if(emmettDoes === 'fold') {
+            folds(-1);
+            return;
+        } else if (emmettDoes === playerCurrBet) {
+            emmettCurrBet = emmettDoes;
+            round = round + 1;
+            render();
+            initRound();
+        } else if (emmettDoes > playerCurrBet) {
+            emmettCurrBet = emmettDoes;
+            pot = pot + emmettCurrBet;
+            message = 'Emmett has raised! What will you do??';
+            render();
+        }
+    }
+
+    if (evt.target === document.getElementById('check')) {
+        let emmettDoes = emmettDecision();
+        if (emmettDoes > 0) {
+            emmettCurrBet = emmettDoes;
+            pot = pot + emmettCurrBet;
+            message = 'Emmett has bet! What will you do??';
+            render();
+        } else if (emmettDoes === 0){
+            round = round + 1;
+            initRound();
+        }
+    }
+
+    if (evt.target === document.getElementById('fold')) {
+        folds(1);
+        return;
+    }
+
+    if (evt.target === document.getElementById('new-game')) {
+        handWinner = null;
+        communityCards = [];
+        initGame();
+    }
+}
+
+function folds(player) { //parameter is 1 if player folds and -1 if emmett folds
+    handWinner = player*-1;
+    if (player === 1) {
+        message = 'You have folded! Emmett has won the round!';
+    } else if (player === -1) {
+        message = 'Emmett has folded! You have won the round!';
+    }
+    render();
+    setTimeout(initGame, 3000);
+}
+
+function emmettDecision () {
+    return 10;
+}
+
+
 function compareHands() {
 
 }
