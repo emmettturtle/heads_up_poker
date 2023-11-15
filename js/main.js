@@ -315,32 +315,20 @@ function buildDeck() {
 function determineHand(hand) {
     const fullHand = communityCards.concat(hand);
     const hasHands = [];
-    // format [#2, #3, #4, #5, #6, #7, #8, #9, #10, #j, #q, #k, #a]
-    const valueMap = [0,0,0,0,0,0,0,0,0,0,0,0,0];
-    // format [#clubs, #spaids, #hearts, #diamonds]
-    const suitMap = [0,0,0,0];
-
-    //deck in format of suit-value, exs: s03 cK hA
-    fullHand.forEach(function(card){
-        let cardSuit = card.slice(0, 1);
-        let cardVal = card.slice(1);
-
-        suitMap[suitMapDir[cardSuit]] += 1;
-        
-        if (cardVal === 'J' || cardVal === 'Q' || cardVal === 'K' || cardVal === 'A') {
-            valueMap[valueMapDir[cardVal]] += 1;
-        } else {
-            valueMap[parseInt(cardVal)-2] += 1;
-        }
-    })
+    const mapObj = createMaps(fullHand);
     // straight(suitMap, valueMap, fullHand);
-    const flushObj = flush(suitMap, valueMap, fullHand);
-
+    const flushObj = flush(mapObj.suit, mapObj.value, fullHand);
+    const quadObj = fourKind(mapObj.suit, mapObj.value, fullHand);
+    const tripObj = threeKind(mapObj.suit, mapObj.value, fullHand);
+    const pairObj = pair(mapObj.suit, mapObj.value, fullHand);
+    const twoPairObj = twoPair(mapObj.suit, mapObj.value, fullHand);
+    const fullHouseObj = fullHouse(mapObj.suit, mapObj.value, fullHand);
     if (flushObj.hasFlush) {
         hasHands.push('flush');
-    } else if (straight(suitMap, valueMap, fullHand)) {
-        hasHands.push('straight');
     } 
+    // else if (straight(suitMap, valueMap, fullHand)) {
+    //     hasHands.push('straight');
+    // } 
     // else if (fourKind(suitMap, valueMap, fullHand)) {
     //     hasHands.push('four of a kind');
     // } else if (fullHouse(suitMap, valueMap, fullHand)) {
@@ -352,8 +340,31 @@ function determineHand(hand) {
     // } else {
     //     hasHands.push('high card');
     // }
-
     console.log(hasHands)
+}
+
+function createMaps (hand) {
+    // format [#2, #3, #4, #5, #6, #7, #8, #9, #10, #j, #q, #k, #a]
+    const valueMap = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+    // format [#clubs, #spaids, #hearts, #diamonds]
+    const suitMap = [0,0,0,0];
+
+    //deck in format of suit-value, exs: s03 cK hA
+    hand.forEach(function(card){
+        let cardSuit = card.slice(0, 1);
+        let cardVal = card.slice(1);
+
+        suitMap[suitMapDir[cardSuit]] += 1;
+        
+        if (cardVal === 'J' || cardVal === 'Q' || cardVal === 'K' || cardVal === 'A') {
+            valueMap[valueMapDir[cardVal]] += 1;
+        } else {
+            valueMap[parseInt(cardVal)-2] += 1;
+        }
+    })
+
+    const mapObj = {'value': valueMap, 'suit': suitMap}
+    return mapObj;
 }
 
 function findHighCard (cards) {
@@ -424,17 +435,154 @@ function straight (suitMap, valueMap, fullHand) {
 
 
 function fourKind (suitMap, valueMap, fullHand) {
+    let quadCards = [];
+    let handHighCard;
+    const obj = {
+        'hasQuad': false,
+        'hand': quadCards,
+        'highCard': handHighCard
+    }
 
+    valueMap.forEach(function(value, cardIdx){
+        if (value === 4) {
+            obj.hasQuad = true;
+            fullHand.forEach(function(card){
+                let cardSuit = card.slice(0, 1);
+                let cardVal = card.slice(1);
+                if (cardVal === 'A' || cardVal === 'K' || cardVal === 'Q' || cardVal === 'J') {
+                    cardVal = valueMapDir[cardVal] + 2;
+                }
+                if(parseInt(cardVal) === cardIdx + 2) {
+                    quadCards.push(card);
+                }
+            });
+        }
+    });
+    handHighCard = findHighCard(quadCards);
+    return obj;
 }
+
+//communityCards = ['s04', 'd04', 'c04', 'c02', 'dA'];
+//determineHand(['s10','h04'])
+    // format [#2, #3, #4, #5, #6, #7, #8, #9, #10, #j, #q, #k, #a]
 
 function fullHouse (suitMap, valueMap, fullHand) {
+    let cloneFullHand = [...fullHand];
+    let fullHouseCards = [];
+    let handHighCard;
+    const obj = {
+        'hasFullHouse': false,
+        'hand': fullHouseCards,
+        'highCard': handHighCard
+    }
+    const firstHouseObj = threeKind(suitMap, valueMap, cloneFullHand);
+    const newFullHand = [];
+    cloneFullHand.forEach(function(card1, idx) {
+        firstHouseObj.hand.forEach(function(card2) {
+            if (card1 === card2) {
+                cloneFullHand.splice(idx, 1);
+            }
+        })
+    })
+    const newMapObj = createMaps(cloneFullHand);
+    const secondHouseObj = pair(newMapObj.suit, newMapObj.value, cloneFullHand);
 
+    if (firstHouseObj.hand && secondHouseObj.hand) {
+        obj.hasFullHouse = true;
+        fullHouseCards = firstHouseObj.hand.concat(secondHouseObj.hand);
+    }
+
+    console.log(fullHouseCards)
+    handHighCard = findHighCard(fullHouseCards);
+    return obj;
 }
+//communityCards = ['s04', 'd04', 'c05', 'c02', 'dA'];
+//determineHand(['h05','h04'])
+
 
 function threeKind (suitMap, valueMap, fullHand) {
-
+    let tripCards = [];
+    let handHighCard;
+    const obj = {
+        'hasTrips': false,
+        'hand': tripCards,
+        'highCard': handHighCard
+    }
+    valueMap.forEach(function(value, cardIdx){
+        if (value === 3) {
+            obj.hasTrips = true;
+            fullHand.forEach(function(card){
+                let cardSuit = card.slice(0, 1);
+                let cardVal = card.slice(1);
+                if (cardVal === 'A' || cardVal === 'K' || cardVal === 'Q' || cardVal === 'J') {
+                    cardVal = valueMapDir[cardVal] + 2;
+                }
+                if(parseInt(cardVal) === cardIdx + 2) {
+                    tripCards.push(card);
+                }
+            });
+        }
+    });
+    handHighCard = findHighCard(tripCards);
+    return obj;
 }
 
-function pair (suitMap, valueMap, fullHand) {
+function twoPair (suitMap, valueMap, fullHand) {
+    let cloneFullHand = [...fullHand];
+    let twoPairCards = [];
+    let handHighCard;
+    const obj = {
+        'hasTwoPair': false,
+        'hand': twoPairCards,
+        'highCard': handHighCard
+    }
 
+    const firstPairObj = pair(suitMap, valueMap, cloneFullHand);
+    const newFullHand = [];
+    cloneFullHand.forEach(function(card1, idx) {
+        firstPairObj.hand.forEach(function(card2) {
+            if (card1 === card2) {
+                cloneFullHand.splice(idx, 1);
+            }
+        })
+    })
+    const newMapObj = createMaps(cloneFullHand);
+    const secondPairObj = pair(newMapObj.suit, newMapObj.value, cloneFullHand);
+
+    if (firstPairObj.hand && secondPairObj.hand) {
+        obj.hasTwoPair = true;
+        twoPairCards = firstPairObj.hand.concat(secondPairObj.hand);
+    }
+    handHighCard = findHighCard(twoPairCards);
+    return obj;
+}
+
+//communityCards = ['s04', 'd05', 'c08', 'c04', 'dA'];
+//determineHand(['s10','h05'])
+
+function pair (suitMap, valueMap, fullHand) {
+    let pairCards = [];
+    let handHighCard;
+    const obj = {
+        'hasPair': false,
+        'hand': pairCards,
+        'highCard': handHighCard
+    }
+    valueMap.forEach(function(value, cardIdx){
+        if (value === 2) {
+            obj.hasPair = true;
+            fullHand.forEach(function(card){
+                let cardSuit = card.slice(0, 1);
+                let cardVal = card.slice(1);
+                if (cardVal === 'A' || cardVal === 'K' || cardVal === 'Q' || cardVal === 'J') {
+                    cardVal = valueMapDir[cardVal] + 2;
+                }
+                if(parseInt(cardVal) === cardIdx + 2) {
+                    pairCards.push(card);
+                }
+            });
+        }
+    });
+    handHighCard = findHighCard(pairCards);
+    return obj;
 }
