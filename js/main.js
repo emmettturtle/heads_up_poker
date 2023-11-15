@@ -282,11 +282,6 @@ function emmettDecision () {
     return 10;
 }
 
-
-function compareHands() {
-
-}
-
 function shuffleDeck() {
     const tempDeck = [...deck];
     const thisShuffledDeck = [];
@@ -312,9 +307,22 @@ function buildDeck() {
     return deck;
 }
 
+
+function compareHands() {
+    //compare the rank of players hand and Emmetts hand
+    //return the winner 1,-1
+    //if the hands rank the same
+    //compare the high cards of the hands 
+}
+
 function determineHand(hand) {
     const fullHand = communityCards.concat(hand);
-    const hasHands = [];
+    const handRankObj = {
+        hasHands: [],
+        highCards: [],
+        highestRankingHand: 'high card',
+        highCardOfBestHand: null
+    };
     const mapObj = createMaps(fullHand);
     // straight(suitMap, valueMap, fullHand);
     const flushObj = flush(mapObj.suit, mapObj.value, fullHand);
@@ -323,25 +331,46 @@ function determineHand(hand) {
     const pairObj = pair(mapObj.suit, mapObj.value, fullHand);
     const twoPairObj = twoPair(mapObj.suit, mapObj.value, fullHand);
     const fullHouseObj = fullHouse(mapObj.suit, mapObj.value, fullHand);
-    if (flushObj.hasFlush) {
-        hasHands.push('flush');
-    } 
-    // else if (straight(suitMap, valueMap, fullHand)) {
-    //     hasHands.push('straight');
-    // } 
-    // else if (fourKind(suitMap, valueMap, fullHand)) {
-    //     hasHands.push('four of a kind');
-    // } else if (fullHouse(suitMap, valueMap, fullHand)) {
-    //     hasHands.push('full house');
-    // } else if (threeKind(suitMap, valueMap, fullHand)) {
-    //     hasHands.push('three of a kind');
-    // } else if (pair(suitMap, valueMap, fullHand)) {
-    //     hasHands.push('pair');
-    // } else {
-    //     hasHands.push('high card');
-    // }
-    console.log(hasHands)
+    const straightObj = straight(mapObj.suit, mapObj.value, fullHand);
+    
+    if (fullHouseObj.hasFullHouse) {
+        handRankObj.hasHands.push('full house');
+        handRankObj.highCards.push(fullHouseObj.highCard);
+    } else if (flushObj.hasFlush) {
+        handRankObj.hasHands.push('flush');
+        handRankObj.highCards.push(flushObj.highCard);
+    } else if (straightObj.hasStraight) {
+        handRankObj.hasHands.push('straight');
+        handRankObj.highCards.push(straightObj.highCard);
+    } else if (quadObj.hasQuad) {
+        handRankObj.hasHands.push('four of a kind');
+        handRankObj.highCards.push(quadObj.highCard);
+    } else if (tripObj.hasTrips) {
+        handRankObj.hasHands.push('three of a kind');
+        handRankObj.highCards.push(tripObj.highCard);
+    } else if (twoPairObj.hasTwoPair) {
+        handRankObj.hasHands.push('two pair');
+        handRankObj.highCards.push(twoPairObj.highCard);
+    } else if (pairObj.hasPair) {
+        handRankObj.hasHands.push('pair');
+        handRankObj.highCards.push(pairObj.highCard);
+    } else {
+        handRankObj.hasHands.push('high card');
+        handRankObj.highCards.push(findHighCard(hand));
+    }
+
+    //if statements in order of rank so first thing in hashands is the best hand
+    handRankObj.highestRankingHand = handRankObj.hasHands[0];
+    handRankObj.highCardOfBestHand = handRankObj.highCards[0];
+    console.log(handRankObj.highestRankingHand)
+    console.log(handRankObj.highCardOfBestHand)
+    return handRankObj;
 }
+//communityCards = ['s04', 'd04', 'c05', 'c02', 'dA'];
+//determineHand(['h05','h04'])
+
+//communityCards = ['s04', 'sA', 's09', 's02', 'dA'];
+//determineHand(['s10','d03'])
 
 function createMaps (hand) {
     // format [#2, #3, #4, #5, #6, #7, #8, #9, #10, #j, #q, #k, #a]
@@ -403,10 +432,11 @@ function flush (suitMap, valueMap, fullHand) {
                 if (cardSuit === thisSuit) {
                     flushCards.push(card);
                 }
-                handHighCard = findHighCard(flushCards);
+                
             });
         }
     });
+    obj.highCard = findHighCard(flushCards);
     return obj;
 }
 //communityCards = ['s04', 'sA', 's09', 's02', 'dA'];
@@ -443,7 +473,7 @@ function straight (suitMap, valueMap, fullHand) {
         }
         
     }
-    handHighCard = findHighCard(straightCards);
+    obj.highCard = findHighCard(straightCards);
     return obj;
 }
 
@@ -472,7 +502,7 @@ function fourKind (suitMap, valueMap, fullHand) {
             });
         }
     });
-    handHighCard = findHighCard(quadCards);
+    obj.highCard = findHighCard(quadCards);
     return obj;
 }
 
@@ -507,7 +537,8 @@ function fullHouse (suitMap, valueMap, fullHand) {
     }
 
     console.log(fullHouseCards)
-    handHighCard = findHighCard(fullHouseCards);
+
+    obj.highCard = findHighCard(fullHouseCards);
     return obj;
 }
 //communityCards = ['s04', 'd04', 'c05', 'c02', 'dA'];
@@ -537,7 +568,7 @@ function threeKind (suitMap, valueMap, fullHand) {
             });
         }
     });
-    handHighCard = findHighCard(tripCards);
+    obj.highCard = findHighCard(tripCards);
     return obj;
 }
 
@@ -567,7 +598,7 @@ function twoPair (suitMap, valueMap, fullHand) {
         obj.hasTwoPair = true;
         twoPairCards = firstPairObj.hand.concat(secondPairObj.hand);
     }
-    handHighCard = findHighCard(twoPairCards);
+    obj.highCard = findHighCard(twoPairCards);
     return obj;
 }
 
@@ -597,6 +628,6 @@ function pair (suitMap, valueMap, fullHand) {
             });
         }
     });
-    handHighCard = findHighCard(pairCards);
+    obj.highCard = findHighCard(pairCards);
     return obj;
 }
