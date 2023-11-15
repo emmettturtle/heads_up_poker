@@ -368,8 +368,22 @@ function createMaps (hand) {
 }
 
 function findHighCard (cards) {
-
+    let highestCard;
+    cards.forEach(function(card, idx) {
+        let highestVal = 0;
+        let cardSuit = card.slice(0, 1);
+        let cardVal = card.slice(1);
+        if (cardVal === 'A' || cardVal === 'K' || cardVal === 'Q' || cardVal === 'J') {
+            cardVal = valueMapDir[cardVal] + 2;
+        }
+        if (idx === 0 || parseInt(cardVal) > parseInt(highestVal)) {
+            highestCard = card;
+            highestVal = parseInt(cardVal);
+        }
+    })
+    return highestCard;
 }
+
 
 function flush (suitMap, valueMap, fullHand) {
     const flushCards = [];
