@@ -16,7 +16,7 @@ const handRanks = [
     'high card'
 ];
 const suitMapDir = {c:0, s:1, h:2, d:3}
-const valueMapDir = {J:10, Q:11, K:12, A:13}
+const valueMapDir = {J:9, Q:10, K:11, A:12}
 
 /*----- state variables -----*/
 let currentRound; //tracks round
@@ -107,7 +107,8 @@ function initGame () {
 
 function initRound() {
     if (round < 5) {
-        pot = playerCurrBet + emmettCurrBet;
+        pot = pot + playerCurrBet + emmettCurrBet;
+        emmettBank = emmettBank - emmettCurrBet;
         playerCurrBet = 0;
         emmettCurrBet = 0;
         message = 'Your turn!';
@@ -209,31 +210,35 @@ function renderEmmettHand () {
 function handleClick(evt) {
     if (evt.target === document.getElementById('increase-bet')) {
         playerCurrBet = playerCurrBet + 1;
+        playerBank = playerBank - 1;
         renderBets();
     } 
     if (evt.target === document.getElementById('decrease-bet')) {
         if (playerCurrBet > 0) {
             playerCurrBet = playerCurrBet - 1;
+            playerBank = playerBank + 1;
         }
         renderBets();
     } 
 
     if (evt.target === document.getElementById('bet')) {
-        pot = pot + playerCurrBet;
-        let emmettDoes = emmettDecision();
-        if(emmettDoes === 'fold') {
-            folds(-1);
-            return;
-        } else if (emmettDoes === playerCurrBet) {
-            emmettCurrBet = emmettDoes;
-            round = round + 1;
-            render();
-            initRound();
-        } else if (emmettDoes > playerCurrBet) {
-            emmettCurrBet = emmettDoes;
-            pot = pot + emmettCurrBet;
-            message = 'Emmett has raised! What will you do??';
-            render();
+        if (playerCurrBet > 0){
+            //pot = pot + playerCurrBet;
+            let emmettDoes = emmettDecision();
+            if(emmettDoes === 'fold') {
+                folds(-1);
+                return;
+            } else if (emmettDoes === playerCurrBet) {
+                emmettCurrBet = emmettDoes;
+                round = round + 1;
+                render();
+                initRound();
+            } else if (emmettDoes > playerCurrBet) {
+                emmettCurrBet = emmettDoes;
+                // pot = pot + emmettCurrBet;
+                message = 'Emmett has raised! What will you do??';
+                render();
+            }
         }
     }
 
@@ -241,7 +246,7 @@ function handleClick(evt) {
         let emmettDoes = emmettDecision();
         if (emmettDoes > 0) {
             emmettCurrBet = emmettDoes;
-            pot = pot + emmettCurrBet;
+            // pot = pot + emmettCurrBet;
             message = 'Emmett has bet! What will you do??';
             render();
         } else if (emmettDoes === 0){
@@ -309,9 +314,9 @@ function buildDeck() {
 
 function determineHand(hand) {
     const fullHand = communityCards.concat(hand);
-    const hasHands = []
-    // format [#1, #2, #3, #4, #5, #6, #7, #8, #9, #10, #j, #q, #k, #a]
-    const valueMap = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    const hasHands = [];
+    // format [#2, #3, #4, #5, #6, #7, #8, #9, #10, #j, #q, #k, #a]
+    const valueMap = [0,0,0,0,0,0,0,0,0,0,0,0,0];
     // format [#clubs, #spaids, #hearts, #diamonds]
     const suitMap = [0,0,0,0];
 
@@ -325,27 +330,30 @@ function determineHand(hand) {
         if (cardVal === 'J' || cardVal === 'Q' || cardVal === 'K' || cardVal === 'A') {
             valueMap[valueMapDir[cardVal]] += 1;
         } else {
-            valueMap[parseInt(cardVal)-1] += 1;
+            valueMap[parseInt(cardVal)-2] += 1;
         }
     })
-    
+    // straight(suitMap, valueMap, fullHand);
+    const flushObj = flush(suitMap, valueMap, fullHand);
 
-    if (flush(suitMap, valueMap, fullHand)) {
+    if (flushObj.hasFlush) {
         hasHands.push('flush');
-    } else if (straight(suitMap, valueMap)) {
+    } else if (straight(suitMap, valueMap, fullHand)) {
         hasHands.push('straight');
-    } else if (fourKind(suitMap, valueMap)) {
-        hasHands.push('four of a kind');
-    } else if (fullHouse(suitMap, valueMap)) {
-        hasHands.push('full house');
-    } else if (threeKind(suitMap, valueMap)) {
-        hasHands.push('three of a kind');
-    } else if (pair(suitMap, valueMap)) {
-        hasHands.push('pair');
-    } else {
-        hasHands.push('high card');
-    }
+    } 
+    // else if (fourKind(suitMap, valueMap, fullHand)) {
+    //     hasHands.push('four of a kind');
+    // } else if (fullHouse(suitMap, valueMap, fullHand)) {
+    //     hasHands.push('full house');
+    // } else if (threeKind(suitMap, valueMap, fullHand)) {
+    //     hasHands.push('three of a kind');
+    // } else if (pair(suitMap, valueMap, fullHand)) {
+    //     hasHands.push('pair');
+    // } else {
+    //     hasHands.push('high card');
+    // }
 
+    console.log(hasHands)
 }
 
 function findHighCard (cards) {
@@ -360,7 +368,6 @@ function flush (suitMap, valueMap, fullHand) {
         'hand': flushCards,
         'highCard': handHighCard
     }
-
     suitMap.forEach(function(suit, idx) {
         if (suit >= 5) {
             obj.hasFlush = true;
@@ -375,28 +382,59 @@ function flush (suitMap, valueMap, fullHand) {
             });
         }
     });
-
     return obj;
 }
 //communityCards = ['s04', 'sA', 's09', 's02', 'dA'];
 //determineHand(['s10','d03'])
 
-function straight (suitMap, valueMap) {
+function straight (suitMap, valueMap, fullHand) {
+    let straightCards = [];
+    let handHighCard;
+    const obj = {
+        'hasStraight': false,
+        'hand': straightCards,
+        'highCard': handHighCard
+    }
+    
+    for (let i = 0; i<9; i++) {
+        if (
+            valueMap[i] > 0 &&
+            valueMap[i+1] > 0 &&
+            valueMap[i+2] > 0 &&
+            valueMap[i+3] > 0 &&
+            valueMap[i+4] > 0
+        ) {
+            obj.hasStraight = true;
+            fullHand.forEach(function(card){
+                let cardSuit = card.slice(0, 1);
+                let cardVal = card.slice(1);
+                if (cardVal === 'A' || cardVal === 'K' || cardVal === 'Q' || cardVal === 'J') {
+                    cardVal = valueMapDir[cardVal] + 2;
+                }
+                if (parseInt(cardVal) >= i+2 && parseInt(cardVal) <= i+6) {
+                    straightCards.push(card);
+                }
+            });
+        }
+        
+    }
+    handHighCard = findHighCard(straightCards);
+    return obj;
+}
+
+
+function fourKind (suitMap, valueMap, fullHand) {
 
 }
 
-function fourKind (suitMap, valueMap) {
+function fullHouse (suitMap, valueMap, fullHand) {
 
 }
 
-function fullHouse (suitMap, valueMap) {
+function threeKind (suitMap, valueMap, fullHand) {
 
 }
 
-function threeKind (suitMap, valueMap) {
-
-}
-
-function pair (suitMap, valueMap) {
+function pair (suitMap, valueMap, fullHand) {
 
 }
