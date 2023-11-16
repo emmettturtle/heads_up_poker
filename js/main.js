@@ -295,10 +295,12 @@ function emmettDecision () {
     //most of the time check
     if (ranNum <= 15) {
         retBet = playerCurrBet;
-    } else if (ranNum > 17 && ranNum <30) {
+    } else if (ranNum > 20) {
         let ranBet = Math.floor(Math.random() * 4);
         retBet = playerCurrBet+(ranBet*10);
-    } else {
+    } 
+    
+    if (round === 4 || ranNum > 25) {
         retBet = emmettBank;
     }
 
