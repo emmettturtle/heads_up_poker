@@ -33,6 +33,7 @@ let emmettCurrBet;
 let playerCurrBet;
 let playerBestFive;
 let emmettBestFive;
+let raiseRound;
 
 /*----- cached elements  -----*/
 const disPlayerBet = document.getElementById('player-bet-value');
@@ -121,14 +122,14 @@ function initRound() {
             message = 'You have won the round! Get ready for the next round!'
             //console.log('yay');
             render();
-            setTimeout(initGame, 7000);
+            setTimeout(initGame, 5000);
             return;
         } else if (handWinner === -1) {
             emmettBank = emmettBank + pot;
             pot = 0;
             message = 'Emmett has won the round! Get ready for the next round!'
             render();
-            setTimeout(initGame, 7000);
+            setTimeout(initGame, 5000);
             return;
         } else if (handWinner === 'T') {
             let potRem = pot % 2;
@@ -140,7 +141,7 @@ function initRound() {
             // console.log(emmettBank)
             // console.log(playerBank)
             render();
-            setTimeout(initGame, 7000);
+            setTimeout(initGame, 5000);
             return;
         }
     }
@@ -236,11 +237,13 @@ function handleClick(evt) {
             } else if (emmettDoes === playerCurrBet) {
                 emmettCurrBet = emmettDoes;
                 round = round + 1;
+                message = 'Emmett Checks!';
                 render();
-                initRound();
+                setTimeout(initRound, 1200);
             } else if (emmettDoes > playerCurrBet) {
                 emmettCurrBet = emmettDoes;
                 // pot = pot + emmettCurrBet;
+                raiseRound = 1;
                 message = 'Emmett has raised! What will you do??';
                 render();
             }
@@ -285,7 +288,7 @@ function folds(player) { //parameter is 1 if player folds and -1 if emmett folds
         playerBank = playerBank + pot;
     }
     render();
-    setTimeout(initGame, 7000);
+    setTimeout(initGame, 5000);
 }
 
 function emmettDecision () {
@@ -295,7 +298,7 @@ function emmettDecision () {
     //most of the time check
     if (ranNum <= 15) {
         retBet = playerCurrBet;
-    } else if (ranNum > 20) {
+    } else if (ranNum > 15) {
         let ranBet = Math.floor(Math.random() * 4);
         retBet = playerCurrBet+(ranBet*10);
     } 
@@ -311,6 +314,10 @@ function emmettDecision () {
 
     if (retBet !== 'fold' && retBet !== 0 && (!retBet || retBet > emmettBank)) {
         retBet = emmettDecision();
+    }
+
+    if (raiseRound) {
+        retBet = playerCurrBet;
     }
 
     return retBet;
