@@ -111,7 +111,10 @@ function initRound() {
     } else if (round === 5) {
         handWinner = compareHands();
         renderEmmettHand();
+        pot = pot + playerCurrBet + emmettCurrBet;
         emmettBank = emmettBank - emmettCurrBet;
+        playerCurrBet = 0;
+        emmettCurrBet = 0;
         if (handWinner === 1) { //if player wins
             playerBank = playerBank + pot;
             pot = 0;
@@ -275,7 +278,7 @@ function folds(player) { //parameter is 1 if player folds and -1 if emmett folds
         message = 'Emmett has folded! You have won the round!';
     }
     render();
-    setTimeout(initGame, 3000);
+    setTimeout(initGame, 7000);
 }
 
 function emmettDecision () {
