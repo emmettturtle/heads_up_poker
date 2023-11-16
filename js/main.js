@@ -58,7 +58,7 @@ document.getElementById('interface').addEventListener('click', handleClick);
 
 /*----- functions -----*/
 
-initGame();
+initNewGame();
 function initGame () {
     if (emmettBank === 0) {
         message = 'The game is over! You have won! Press new game to play again...';
@@ -69,7 +69,7 @@ function initGame () {
         renderMessage();
         return;
     }
-
+    renderHideEmmett();
     round = 1;
 
     shuffledDeck = shuffleDeck();
@@ -85,24 +85,20 @@ function initGame () {
         shuffledDeck.pop() 
     ];
 
-
-
-    if (handWinner === 1) {
-        playerBank = playerBank + pot;
-        pot = 0;
-    } else if (handWinner === -1) {
-        emmettBank = emmettBank + pot;
-        pot = 0;
-    } else {
-        emmettBank = 200;
-        playerBank = 200;
-        pot = 0;
-    }
-
     playerCurrBet = 0;
     emmettCurrBet = 0;
     pot = 0;
     initRound();
+}
+
+function initNewGame () {
+    handWinner = null;
+    gameWinner = null;
+    emmettBank = 200;
+    playerBank = 200;
+    communityCards = [];
+    renderHideEmmett;
+    initGame();
 }
 
 function initRound() {
@@ -115,20 +111,21 @@ function initRound() {
     } else if (round === 5) {
         handWinner = compareHands();
         renderEmmettHand();
+        emmettBank = emmettBank - emmettCurrBet;
         if (handWinner === 1) { //if player wins
             playerBank = playerBank + pot;
             pot = 0;
             message = 'You have won the round! Get ready for the next round!'
             //console.log('yay');
             render();
-            setTimeout(initGame, 3000);
+            setTimeout(initGame, 7000);
             return;
         } else if (handWinner === -1) {
             emmettBank = emmettBank + pot;
             pot = 0;
             message = 'Emmett has won the round! Get ready for the next round!'
             render();
-            setTimeout(initGame, 3000);
+            setTimeout(initGame, 7000);
             return;
         } else if (handWinner === 'T') {
             let potRem = pot % 2;
@@ -140,7 +137,7 @@ function initRound() {
             // console.log(emmettBank)
             // console.log(playerBank)
             render();
-            setTimeout(initGame, 3000);
+            setTimeout(initGame, 7000);
             return;
         }
     }
@@ -154,6 +151,11 @@ function render () {
     renderCommunityCards();
     renderPlayerHand();
     renderMessage();
+}
+
+function renderHideEmmett () {
+    disEmmettCard1.setAttribute('class', 'card back-red');
+    disEmmettCard2.setAttribute('class', 'card back-red');
 }
 
 function renderBets() {
@@ -261,9 +263,7 @@ function handleClick(evt) {
     }
 
     if (evt.target === document.getElementById('new-game')) {
-        handWinner = null;
-        communityCards = [];
-        initGame();
+        initNewGame();
     }
 }
 
@@ -279,7 +279,7 @@ function folds(player) { //parameter is 1 if player folds and -1 if emmett folds
 }
 
 function emmettDecision () {
-    return 10;
+    return 5;
 }
 
 function shuffleDeck() {
@@ -312,8 +312,59 @@ function compareHands() {
     //compare the rank of players hand and Emmetts hand
     //return the winner 1,-1
     //if the hands rank the same
-    //compare the high cards of the hands 
+    //compare the high cards of the hands and whichever is higher wins
+    let winner = null;
+    const playerHandObj = determineHand(playerHand);
+    const emmettHandObj = determineHand(emmettHand);
+
+    let playerHandRank = handRanks.indexOf(playerHandObj.highestRankingHand);
+    let emmettHandRank = handRanks.indexOf(emmettHandObj.highestRankingHand);
+    //lower the hand Rank # the higher it is
+    // console.log(playerHandObj)
+    // console.log(emmettHandObj)
+    // console.log(playerHandRank)
+    // console.log(emmettHandRank)
+    if (playerHandRank < emmettHandRank) {
+        winner = 1;
+    } else if (emmettHandRank < playerHandRank) {
+        winner = -1;
+    } else if (emmettHandRank === playerHandRank) {
+        let playerHighCardVal = parseInt(faceToVal(playerHandObj.highCardOfBestHand.slice(1)));
+        let emmettHighCardVal = parseInt(faceToVal(emmettHandObj.highCardOfBestHand.slice(1)));
+        if (playerHighCardVal > emmettHighCardVal) {
+            winner = 1;
+        } else if (emmettHighCardVal > playerHighCardVal) {
+            winner = -1;
+        } else if (emmettHighCardVal === playerHighCardVal) {
+            // console.log('are we here')
+            let playerHandHighCardVal = parseInt(faceToVal(findHighCard(playerHand).slice(1)));
+            let emmettHandHighCardVal = parseInt(faceToVal(findHighCard(emmettHand).slice(1)));
+            if (playerHandHighCardVal > emmettHandHighCardVal) {
+                winner = 1;
+            } else if (emmettHandHighCardVal > playerHandHighCardVal) {
+                winner = -1;
+            } else if (emmettHandHighCardVal === playerHandHighCardVal) {
+                winner = 'T';
+            }
+        }
+    }
+    return winner;
 }
+
+function faceToVal (cardVal) {
+    if (cardVal === 'A' || cardVal === 'K' || cardVal === 'Q' || cardVal === 'J') {
+        cardVal = valueMapDir[cardVal] + 2;
+    }
+    return cardVal;
+}
+
+// emmettHand = ['sQ', 's09']
+// playerHand = ['sJ', 'cJ']
+// communityCards = ['s02', 'sA', 'd05', 'd07', 'd08']
+
+// emmettHand = ['c07', 's04']
+// playerHand = ['s05', 'sA']
+// communityCards = ['s09', 'd10', 'c02', 'c03', 'h10']
 
 function determineHand(hand) {
     const fullHand = communityCards.concat(hand);
@@ -333,7 +384,10 @@ function determineHand(hand) {
     const fullHouseObj = fullHouse(mapObj.suit, mapObj.value, fullHand);
     const straightObj = straight(mapObj.suit, mapObj.value, fullHand);
     
-    if (fullHouseObj.hasFullHouse) {
+    if (quadObj.hasQuad) {
+        handRankObj.hasHands.push('four of a kind');
+        handRankObj.highCards.push(quadObj.highCard);
+    } else if (fullHouseObj.hasFullHouse) {
         handRankObj.hasHands.push('full house');
         handRankObj.highCards.push(fullHouseObj.highCard);
     } else if (flushObj.hasFlush) {
@@ -342,9 +396,6 @@ function determineHand(hand) {
     } else if (straightObj.hasStraight) {
         handRankObj.hasHands.push('straight');
         handRankObj.highCards.push(straightObj.highCard);
-    } else if (quadObj.hasQuad) {
-        handRankObj.hasHands.push('four of a kind');
-        handRankObj.highCards.push(quadObj.highCard);
     } else if (tripObj.hasTrips) {
         handRankObj.hasHands.push('three of a kind');
         handRankObj.highCards.push(tripObj.highCard);
@@ -362,8 +413,8 @@ function determineHand(hand) {
     //if statements in order of rank so first thing in hashands is the best hand
     handRankObj.highestRankingHand = handRankObj.hasHands[0];
     handRankObj.highCardOfBestHand = handRankObj.highCards[0];
-    console.log(handRankObj.highestRankingHand)
-    console.log(handRankObj.highCardOfBestHand)
+    // console.log(handRankObj.highestRankingHand)
+    // console.log(handRankObj.highCardOfBestHand)
     return handRankObj;
 }
 //communityCards = ['s04', 'd04', 'c05', 'c02', 'dA'];
@@ -531,7 +582,7 @@ function fullHouse (suitMap, valueMap, fullHand) {
     const newMapObj = createMaps(cloneFullHand);
     const secondHouseObj = pair(newMapObj.suit, newMapObj.value, cloneFullHand);
 
-    if (firstHouseObj.hand && secondHouseObj.hand) {
+    if (firstHouseObj.hasTrips && secondHouseObj.hasPair) {
         obj.hasFullHouse = true;
         fullHouseCards = firstHouseObj.hand.concat(secondHouseObj.hand);
     }
@@ -594,7 +645,7 @@ function twoPair (suitMap, valueMap, fullHand) {
     const newMapObj = createMaps(cloneFullHand);
     const secondPairObj = pair(newMapObj.suit, newMapObj.value, cloneFullHand);
 
-    if (firstPairObj.hand && secondPairObj.hand) {
+    if (firstPairObj.hasPair && secondPairObj.hasPair) {
         obj.hasTwoPair = true;
         twoPairCards = firstPairObj.hand.concat(secondPairObj.hand);
     }
