@@ -300,7 +300,7 @@ function emmettDecision () {
         retBet = playerCurrBet+(ranBet*10);
     } 
     
-    if (round === 4 || ranNum > 25) {
+    if (round === 4 && ranNum > 25) {
         retBet = emmettBank;
     }
 

@@ -5,7 +5,7 @@
 body {
     margin: 0;
     font-family: Helvetica;
-    background-color: black;
+    background-color: rgb(73, 73, 73);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -18,21 +18,25 @@ body {
     margin-top: 80px;
     margin-bottom: 100px;
     background-color: lightgray;
+    border-radius: 15px;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 3fr 1fr;
+    box-shadow: 10px 10px 15px -3px rgba(0,0,0,0.1),0px 10px 15px -3px rgba(0,0,0,0.1);
 }
 
 #display-board {
     grid-column: 1/2;
     grid-row: 1/2;
-    background-color: green;
-    margin: 30px;
+    background-color: rgba(0, 134, 0, 0.878);
+    margin: 25px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
-    height: 550px;
-    
+    height: 500px;
+    border-radius: 15px;
+    margin-top: 25px;
+
 }
 
 /* top row */
@@ -47,6 +51,7 @@ body {
     height: 100px;
     width: 160px;
     justify-self: center;
+    border-radius: 5px;
 }
 
 #emmett-hand {
@@ -54,6 +59,7 @@ body {
     grid-row: 1/2;
     margin: 30px;
     justify-self: center;
+    margin-bottom: -10px;
 }
 
 #emmett-hand > div {
@@ -70,6 +76,7 @@ body {
     height: 100px;
     width: 160px;
     justify-self: center;
+    border-radius: 5px;
 }
 
 /* MIDDLE ROW */
@@ -81,12 +88,15 @@ body {
     width: 200px;
     justify-self: center;
     text-align: center;
+    border-radius: 40px;
 }
 
 #community-cards {
     grid-column: 2/4;
     grid-row: 2/3;
     justify-self: center;
+    margin-top: 15px;
+    margin-bottom: -40px;
 }
 
 #community-cards > div {
@@ -99,19 +109,21 @@ body {
     grid-row: 3/4;
     background-color: black;
     margin: 30px;
-    /* margin-top: 0px; */
+    margin-top: 0px;
     color: white;
     text-align: center;
     height: 100px;
     width: 160px;
     justify-self: center;
+    border-radius: 5px;
 }
 
 #player-hand {
     grid-column: 2/3;
     grid-row: 3/4;
     margin: 30px;
-    /* margin-top: 0px; */
+    margin-bottom: -30px;
+    margin-top: 0px;
     justify-self: center;
 }
 
@@ -124,12 +136,13 @@ body {
     grid-row: 3/4;
     background-color: purple;
     margin: 30px;
-    /* margin-top: 0px; */
+    margin-top: 0px;
     color: white;
     text-align: center;
     height: 100px;
     width: 160px;
     justify-self: center;
+    border-radius: 5px;
 }
 
 
@@ -137,48 +150,128 @@ body {
 #interface {
     grid-column: 1/2;
     grid-row: 2/3;
-    background-color: pink;
-    height: 125px;
+    background-color: lightgray;
+    height: 150px;
+    margin-top: -20px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 50px 1fr 100px 1fr 100px 1fr 50px;
+    grid-template-rows: 20px 40px 40px 40px 20px;
+    align-items: center;
+    border-radius: 15px;
 }
 
 #message {
-    grid-column: 3/4;
+    grid-column: 6/7;
     grid-row: 2/3;
     text-align: center;
 }
 
 /* BUTTONS */
 
+.up-down {
+    /* margin-top: 4vmin; */
+    padding: 10px;
+    font-size: 20px;
+    border-radius: 20px;
+    border: 1px solid grey;
+    width: 70px;
+    color: grey;
+    justify-self: center;
+}
+
+.up-down:hover {
+    color: white;
+    background-color: red;
+}
+
 #increase-bet {
-    grid-column: 1/2;
-    grid-row: 1/2;
+    grid-column: 4/5;
+    grid-row: 2/3;
+    /* padding-bottom: px; */
+    margin: 20px;
+    margin-bottom: 50px;
     
 }
 
 #decrease-bet {
-    grid-column: 1/2;
-    grid-row: 2/3;
+    grid-column: 4/5;
+    grid-row: 4/5;
+    margin: 20px;
+    margin-top: 40px;
+    
 }
 
 #bet {
-    grid-column: 1/2;
+    grid-column: 4/5;
     grid-row: 3/4;
+    background-color: green;
 }
 
 #check {
     grid-column: 2/3;
-    grid-row: 1/2;
+    grid-row: 2/3;
+    background-color: lightblue;
 }
 
 #fold {
     grid-column: 2/3;
-    grid-row: 2/3;
+    grid-row: 4/5;
 }
 
 #new-game {
-    grid-column: 2/3;
-    grid-row: 3/4;
+    grid-column: 6/7;
+    grid-row: 4/5;
+    background-color: red;
+}
+
+
+.button-50 {
+    appearance: button;
+    background-color: #000;
+    background-image: none;
+    border: 1px solid #000;
+    border-radius: 4px;
+    box-shadow: #fff 4px 4px 0 0,#000 4px 4px 0 1px;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    margin: 0 5px 10px 0;
+    overflow: visible;
+    padding: 12px 40px;
+    text-align: center;
+    text-transform: none;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.button-50:focus {
+    text-decoration: none;
+}
+
+.button-50:hover {
+    text-decoration: none;
+}
+
+.button-50:active {
+    box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
+    outline: 0;
+}
+
+.button-50:not([disabled]):active {
+    box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
+    transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+    .button-50 {
+        padding: 12px 50px;
+    }
 }

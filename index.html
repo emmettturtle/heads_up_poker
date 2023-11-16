@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heads Up Poker</title>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/arrow-down-r.css' rel='stylesheet'>
     <link rel="stylesheet" href="css/card-library/css/cardstarter.css">
     <link rel="stylesheet" href="css/main.css">
     <script defer src="js/main.js"></script>
@@ -52,17 +53,21 @@
             </div>
         </div>
         <div id="interface">
-            <button id="increase-bet">INCREASE</button>
-            <button id="decrease-bet">DECREASE</button>
-            <button id="bet">BET</button>
+            <button class="up-down" id="increase-bet">+</button>
+            <button class="button-50" role="button" id="bet">BET</button>
+            <button class="up-down" id="decrease-bet">-</button>
 
-            <button id="check">CHECK</button>
-            <button id="fold">FOLD</button>
+            <button class="button-50" role="button" id="check">CHECK</button>
+            <button class="button-50" role="button" id="fold">FOLD</button>
 
-            <button id="new-game">NEW GAME</button>
+            <button class="button-50" role="button" id="new-game">NEW GAME</button>
 
             <p id="message">It is your turn!</p>
         </div>
+
+
     </div>
+
 </body>
 </html>
+
