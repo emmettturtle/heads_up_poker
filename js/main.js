@@ -282,7 +282,34 @@ function folds(player) { //parameter is 1 if player folds and -1 if emmett folds
 }
 
 function emmettDecision () {
-    return 5;
+    //random percentage of bank
+    let ranNum = Math.floor(Math.random() * 10);
+    let perc = ranNum*0.05;
+    let betAmt = Math.floor(perc*emmettBank);
+    let retBet;
+    //if bet is similar
+    if (betAmt >= playerCurrBet-10 && betAmt <= playerCurrBet+10) {
+        retBet = playerCurrBet;
+        return 
+    //if bet is much higher
+    } else if (betAmt > playerCurrBet+10) {
+        retBet = betAmt;
+    //bet amt is much lower
+    } else if (betAmt < playerCurrBet-10) {
+        retBet = 'fold';
+    }
+
+    //random all in 10% chance on the last round
+    let allInNum = Math.floor(Math.random() * 10);
+    if (allInNum === 7 && round === 4) {
+        retBet = emmettBank;
+    }
+
+    if (!retBet) {
+        emmettDecision();
+    }
+    console.log(retBet)
+    return retBet;
 }
 
 function shuffleDeck() {
