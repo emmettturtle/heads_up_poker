@@ -2,7 +2,7 @@
 
 
 ## Overview
-This project is a full browser game where you are playing heads up (1v1), texas hold em' poker, against a bot to represent me. In this first itteration of the game I have built out a full user interface and game mechanics including, basic gameplay flow, rendering, hand determination/win logic, and a basic bot that I have given my name because it is my child. In this current itteration of the game the bot is mostly making structured random decsisions (accurate to how I go through life). If you have experience in playing poker you would know that this can actually make the game more difficult because it is harder to predict what hand an oppenent has if their actions are irrational. This is why experienced poker players can sometimes not do well against new players. All this to say, dont underestimate the stupid Emmett bot!!
+This project is a full browser game where you are playing heads up (1v1), texas hold em' poker, against a bot to represent me. In this first iteration of the game I have built out a full user interface and game mechanics including, basic gameplay flow, rendering, hand determination/win logic, and a basic bot that I have given my name because it is my child. In this current iteration of the game the bot is mostly making structured random decisions (accurate to how I go through life). If you have experience in playing poker you would know that this can actually make the game more difficult because it is harder to predict what hand an opponent has if their actions are irrational. This is why experienced poker players can sometimes not do well against new players. All this to say, don't underestimate the stupid Emmett bot!!
 
 
 ## Game Walkthrough
@@ -19,7 +19,7 @@ After both players bet 15 on the initial round (making the pot 30 and removing 1
 Emmett raises and indicated by the message in the bottom right hand corner. Player calls and we move to round 3. 
 
 ![Imgur](https://i.imgur.com/RC5d8AA.png)
-After not much excitement in round 3 (not shown) we find ourselves in the final round. All 5 community cards are now shown and after final bets are placed Emmett's hand is shown to reveal the best of 2 bad hands, ace high. Not so stupid afterall! Emmett wins, as indicated by the message, and the money from the pot is added to Emmett's bank. 
+After not much excitement in round 3 (not shown) we find ourselves in the final round. All 5 community cards are now shown and after final bets are placed Emmett's hand is shown to reveal the best of 2 bad hands, ace high. Not so stupid after all! Emmett wins, as indicated by the message, and the money from the pot is added to Emmett's bank. 
 
 ![Imgur](https://i.imgur.com/wP83Ly5.png)
 The next round is automatically activated after a few seconds. The deck is shuffled, cards are redealt, the pot is cleared, and banks are updated. This will all repeat until someone is out of money and a game winner will be declared.
@@ -42,4 +42,4 @@ Things to know:
 
 
 ## What's next?
-This is only the first itteration of this game. As I learn more I plan on coming back to it and updating the game to be better. Ironing out bugs and making the UI look and feel better will be a priority but mostly I want to make the Emmett bot really good. This will definetly be a challenge and at some point I would want to implement some machine learning so Emmett can teach itself! As my skills improve so will Emmett's :)
+This is only the first iteration of this game. As I learn more I plan on coming back to it and updating the game to be better. Ironing out bugs and making the UI look and feel better will be a priority but mostly I want to make the Emmett bot really good. This will definetly be a challenge and at some point I would want to implement some machine learning so Emmett can teach itself! As my skills improve so will Emmett's :)
