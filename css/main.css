@@ -36,7 +36,6 @@ body {
     height: 500px;
     border-radius: 15px;
     margin-top: 25px;
-
 }
 
 /* top row */
@@ -145,8 +144,6 @@ body {
     border-radius: 5px;
 }
 
-
-
 #interface {
     grid-column: 1/2;
     grid-row: 2/3;
@@ -223,7 +220,6 @@ body {
     grid-row: 4/5;
     background-color: red;
 }
-
 
 .button-50 {
     appearance: button;
