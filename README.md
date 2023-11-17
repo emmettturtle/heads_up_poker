@@ -42,4 +42,4 @@ Things to know:
 
 
 ## What's next?
-This is only the first itteration of this game. As I learn more I plan on coming back to it and updating the game to be better. Ironing out bugs and making the UI look and feel better will be a priority but mostly I want to make the Emmett bot really good. This will definetly be a challenge and at some point I would want to implement some machine learning to truly make Emmett unbeatable! As my skills improve so will Emmett's :)
+This is only the first itteration of this game. As I learn more I plan on coming back to it and updating the game to be better. Ironing out bugs and making the UI look and feel better will be a priority but mostly I want to make the Emmett bot really good. This will definetly be a challenge and at some point I would want to implement some machine learning so Emmett can teach itself! As my skills improve so will Emmett's :)
