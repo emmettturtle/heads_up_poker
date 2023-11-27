@@ -61,11 +61,11 @@ document.getElementById('interface').addEventListener('click', handleClick);
 
 initNewGame();
 function initGame () {
-    if (emmettBank === 0) {
+    if (emmettBank <= 0) {
         message = 'The game is over! You have won! Press new game to play again...';
         renderMessage();
         return;
-    } else if (playerBank === 0) {
+    } else if (playerBank <= 0) {
         message = 'The game is over! Emmett has won! Press new game to play again...';
         renderMessage();
         return;
@@ -210,8 +210,10 @@ function renderEmmettHand () {
 
 function handleClick(evt) {
     if (evt.target === document.getElementById('increase-bet')) {
-        playerCurrBet = playerCurrBet + 1;
-        playerBank = playerBank - 1;
+        if (playerBank > 0) {
+            playerCurrBet = playerCurrBet + 1;
+            playerBank = playerBank - 1;
+        }
         renderBets();
     } 
     if (evt.target === document.getElementById('decrease-bet')) {
